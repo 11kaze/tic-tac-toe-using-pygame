@@ -24,7 +24,7 @@ CLOCK = pg.time.Clock()
 screen = pg.display.set_mode((width, height+100),0,32)
 pg.display.set_caption("Tic-Tac-Toe-game")
 
-#loading the images of first screen, X and O.
+#loading the images of first screen, X and O and winning_screen.
 opening = pg.image.load(r'C:\Users\pawan\Desktop\work\tic-tac-toe-using-pygame\img\opening_image.jpg')
 img_of_X = pg.image.load(r'C:\Users\pawan\Desktop\work\tic-tac-toe-using-pygame\img\x_img.png')
 img_of_O = pg.image.load(r'C:\Users\pawan\Desktop\work\tic-tac-toe-using-pygame\img\o_img.png')
@@ -37,6 +37,7 @@ winner_x = pg.transform.scale(winner_x,(width,height+100))
 winner_o = pg.transform.scale(winner_o,(width,height+100))
 opening = pg.transform.scale(opening, (width, height+100))
 
+# this setup the design of game board
 def game_opening():
     screen.blit(opening,(0,0))
     pg.display.update()
@@ -50,9 +51,9 @@ def game_opening():
     # Drawing horizontal lines on board
     pg.draw.line(screen,line_color,(0,height/3),(width, height/3),9)
     pg.draw.line(screen,line_color,(0,(2*height)/3),(width, (2*height)/3),7)
-    draw_status()
-
-def draw_status():
+    game_status()
+# Print current status of game on bottom of screen 
+def game_status():
     global match_draw
     if winner is None:
         message = X_and_O.upper() + "'s Turn"
@@ -85,6 +86,7 @@ def draw_status():
         score['o'] += 1    
     pg.display.update()
 
+# checks whether winning or match draw condition is reached or not 
 def check_win():
     global Tic_Tac_Toe_table, winner,match_draw
     # check for winning rows
@@ -114,8 +116,9 @@ def check_win():
         pg.draw.line (screen, (250,70,70), (350, 50), (50, 350), 4)
     if(all([all(row) for row in Tic_Tac_Toe_table]) and winner is None ):
         match_draw = True
-    draw_status()
+    game_status()
 
+# this function takes responsibilty to print image of "X and O"
 def drawXO(row,col):
     global Tic_Tac_Toe_table,X_and_O
     
@@ -169,11 +172,12 @@ def userClick():
     #print(row,col)
     if(row and col and Tic_Tac_Toe_table[row-1][col-1] is None):
         global X_and_O
-        #draw the x or o on screen
+        #draw the picture of 'x' or 'O' on screen.
         drawXO(row,col)
+        # check whether the winning conditions are satisfied or not.
         check_win()
 
-#restart game
+#reset the game
 def reset_game():
     global Tic_Tac_Toe_table, winner,X_and_O, match_draw
     time.sleep(3)
@@ -188,8 +192,8 @@ def reset_game():
     #print(score)
 
 game_opening()
-mixer.init()
-mixer.music.set_volume(0.6)
+mixer.init()                            # initialise mixer(mixer will play music clips for our game)
+mixer.music.set_volume(0.6)             # set volume for music
 while(True):
     
     for event in pg.event.get():
@@ -197,9 +201,9 @@ while(True):
             pg.quit()
             sys.exit()
         elif event.type == MOUSEBUTTONDOWN:
-            # user clicked and then place an "X" or "O"
+            # if user clicked on screen then place an "X" or "O" at the respective position.
             userClick()
-            if(winner or match_draw):
+            if(winner or match_draw):     # once the result is declared, we will reset the game 
                 reset_game()
     pg.display.update()
     CLOCK.tick(15)
